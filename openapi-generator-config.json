@@ -1,0 +1,13 @@
+{
+  "useBeanValidation": "true",
+  "useTags": "true",
+  "generateApiTests": "false",
+  "generateApiDocumentation": "false",
+  "supportingFiles": "false",
+  "serializableModel": "true",
+  "generateAliasAsModel": "true",
+  "basePackage": "io.mynotes.api.management",
+  "modelPackage": "io.mynotes.api.management.model",
+  "apiPackage": "io.mynotes.api.management.api",
+  "configPackage": "io.mynotes.api.management.config"
+}
