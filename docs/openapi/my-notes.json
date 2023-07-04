@@ -3,13 +3,13 @@
     "info": {
         "title": "My Notes - OpenAPI 3.0",
         "description": "This is a Notes Server based on the OpenAPI 3.0 specification.",
-        "termsOfService": "http://my-notes.io/terms/",
+        "termsOfService": "https://my-notes.io/terms/",
         "contact": {
             "email": "support@my-notes.io"
         },
         "license": {
             "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
         },
         "version": "1.0.0"
     },
@@ -63,6 +63,9 @@
                                         },
                                         "offset": {
                                             "$ref": "#/components/schemas/offset"
+                                        },
+                                        "total": {
+                                            "$ref": "#/components/schemas/total"
                                         }
                                     }
                                 }
@@ -71,6 +74,26 @@
                     },
                     "400": {
                         "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -130,6 +153,26 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "content": {
@@ -172,6 +215,26 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -194,13 +257,13 @@
                     }
                 }
             },
-            "put": {
+            "patch": {
                 "tags": [
                     "Notes"
                 ],
-                "summary": "Replace a Note",
+                "summary": "Update a Note",
                 "description": "Update an existing note",
-                "operationId": "replace-note",
+                "operationId": "update-note",
                 "requestBody": {
                     "description": "Update an existing note",
                     "content": {
@@ -224,6 +287,26 @@
                     },
                     "400": {
                         "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -265,6 +348,26 @@
                     "204": {
                         "description": "No Content"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "content": {
@@ -283,11 +386,11 @@
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Register a User",
-                "description": "Registers a new user.",
-                "operationId": "register-user",
+                "summary": "Create a User",
+                "description": "Creates a new user.",
+                "operationId": "create-user",
                 "requestBody": {
-                    "description": "",
+                    "description": "Create a new user.",
                     "content": {
                         "application/json": {
                             "schema": {
@@ -330,7 +433,7 @@
                 }
             }
         },
-        "/v1/token": {
+        "/v1/authenticate": {
             "post": {
                 "tags": [
                     "Auth"
@@ -339,10 +442,19 @@
                 "description": "Generate an access token to access other endpoints of the API.",
                 "operationId": "generate-token",
                 "requestBody": {
+                    "description": "Authenticate a user.",
                     "content": {
-                        "application/json": {
+                        "application/x-www-form-urlencoded": {
                             "schema": {
-                                "type": "object"
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
                             }
                         }
                     }
@@ -353,13 +465,46 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object"
+                                    "type": "object",
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string"
+                                        },
+                                        "expires_in": {
+                                            "type": "integer",
+                                            "example": 3600
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    }
                                 }
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -389,42 +534,77 @@
                 "properties": {
                     "id": {
                         "type": "string",
+                        "description": "A unique identifier for a note.",
                         "format": "uuid",
                         "readOnly": true
                     },
                     "title": {
                         "type": "string",
-                        "example": "title"
+                        "description": "Title of the note.",
+                        "example": "My shopping list"
                     },
                     "content": {
                         "type": "string",
-                        "example": "content"
+                        "description": "The content of the note.",
+                        "example": "1. Milk\n2. Apples\n3. Bread"
                     },
-                    "created_date": {
+                    "created_at": {
                         "type": "string",
+                        "description": "The timestamp the note was created.",
                         "format": "date-time"
                     },
-                    "modified_date": {
+                    "modified_at": {
                         "type": "string",
+                        "description": "The timestamp the note was last modified.",
                         "format": "date-time"
                     }
                 }
             },
             "offset": {
-                "type": "integer"
+                "type": "integer",
+                "description": "Pointer to navigate between pages.",
+                "minimum": 0,
+                "example": 10
             },
             "limit": {
-                "type": "integer"
+                "type": "integer",
+                "description": "Number of notes to be returned in each page.",
+                "minimum": 1,
+                "maximum": 10,
+                "example": 10
+            },
+            "total": {
+                "type": "integer",
+                "description": "Total number of notes.",
+                "minimum": 0,
+                "example": 15
             },
             "user": {
                 "type": "object",
                 "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "description": "First name of the user.",
+                        "minLength": 1,
+                        "maxLength": 30,
+                        "example": "Jane"
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "description": "Last name of the user.",
+                        "minLength": 1,
+                        "maxLength": 30,
+                        "example": "Doe"
+                    },
                     "email": {
                         "type": "string",
+                        "description": "Email ID used to sign up for My Notes.",
                         "format": "email"
                     },
                     "password": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Password for My Notes.",
+                        "minLength": 8
                     }
                 }
             },
@@ -433,16 +613,20 @@
                 "properties": {
                     "error_id": {
                         "type": "string",
+                        "description": "Unique ID to help debug the error.",
                         "format": "uuid"
                     },
                     "error_code": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Error code."
                     },
                     "error_description": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Error description."
                     },
                     "timestamp": {
                         "type": "string",
+                        "description": "Timestamp the error occurred.",
                         "format": "date-time"
                     }
                 }
