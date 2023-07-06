@@ -44,30 +44,29 @@
                 "summary": "List all Notes",
                 "description": "List all available notes.",
                 "operationId": "list-notes",
+                "parameters": [
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/offset"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/limit"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "items": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/note"
-                                            }
-                                        },
-                                        "limit": {
-                                            "$ref": "#/components/schemas/limit"
-                                        },
-                                        "offset": {
-                                            "$ref": "#/components/schemas/offset"
-                                        },
-                                        "total": {
-                                            "$ref": "#/components/schemas/total"
-                                        }
-                                    }
+                                    "$ref": "#/components/schemas/notes"
                                 }
                             }
                         }
@@ -465,20 +464,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "access_token": {
-                                            "type": "string"
-                                        },
-                                        "expires_in": {
-                                            "type": "integer",
-                                            "example": 3600
-                                        },
-                                        "token_type": {
-                                            "type": "string",
-                                            "example": "Bearer"
-                                        }
-                                    }
+                                    "$ref": "#/components/schemas/token"
                                 }
                             }
                         }
@@ -561,6 +547,30 @@
                         "description": "The timestamp the note was last modified.",
                         "format": "date-time"
                     }
+                },
+                "required": [
+                    "title",
+                    "content"
+                ]
+            },
+            "notes": {
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/note"
+                        }
+                    },
+                    "offset": {
+                        "$ref": "#/components/schemas/offset"
+                    },
+                    "limit": {
+                        "$ref": "#/components/schemas/limit"
+                    },
+                    "total": {
+                        "$ref": "#/components/schemas/total"
+                    }
                 }
             },
             "offset": {
@@ -610,6 +620,27 @@
                         "minLength": 8
                     }
                 }
+            },
+            "token": {
+                "type": "object",
+                "properties": {
+                    "access_token": {
+                        "type": "string"
+                    },
+                    "expires_in": {
+                        "type": "integer",
+                        "example": 3600
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "example": "Bearer"
+                    }
+                },
+                "required": [
+                    "access_token",
+                    "expires_in",
+                    "token_type"
+                ]
             },
             "error": {
                 "type": "object",
