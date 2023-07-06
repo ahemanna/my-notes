@@ -2,7 +2,7 @@
   "useBeanValidation": "true",
   "useTags": "true",
   "generateApiTests": "false",
-  "generateApiDocumentation": "false",
+  "generateApiDocumentation": "true",
   "supportingFiles": "false",
   "serializableModel": "true",
   "generateAliasAsModel": "true",

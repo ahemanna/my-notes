@@ -192,7 +192,7 @@
                     "name": "id",
                     "in": "path",
                     "schema": {
-                        "$ref": "#/components/schemas/note/properties/id"
+                        "$ref": "#/components/schemas/id"
                     },
                     "required": true
                 }
@@ -529,14 +529,17 @@
     },
     "components": {
         "schemas": {
+            "id": {
+                "type": "string",
+                "description": "A unique identifier for a note.",
+                "format": "uuid",
+                "readOnly": true
+            },
             "note": {
                 "type": "object",
                 "properties": {
                     "id": {
-                        "type": "string",
-                        "description": "A unique identifier for a note.",
-                        "format": "uuid",
-                        "readOnly": true
+                        "$ref": "#/components/schemas/id"
                     },
                     "title": {
                         "type": "string",
