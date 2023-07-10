@@ -1,8 +1,37 @@
 package io.mynotes.mynotes.helper;
 
-public class Utils {
-    public static String getAccessToken() {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
-        return null;
+import java.util.Objects;
+
+@Configuration
+public class Utils {
+    @Autowired
+    private Environment env;
+
+    public Utils(Environment env) {
+        this.env = env;
+    }
+
+    public String getClientId() {
+        return env.getProperty("auth0.client-id");
+    }
+
+    public String getClientSecret() {
+        return env.getProperty("auth0.client-secret");
+    }
+
+    public String getAudience() {
+        return env.getProperty("auth0.audience");
+    }
+
+    public String getApiHost() {
+        return env.getProperty("auth0.api-host");
+    }
+
+    public long getCacheTtl() {
+        return Long.parseLong(Objects.requireNonNull(env.getProperty("cache.ttl")));
     }
 }

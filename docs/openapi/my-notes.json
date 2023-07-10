@@ -628,6 +628,9 @@
                     "access_token": {
                         "type": "string"
                     },
+                    "scope": {
+                        "type": "string"
+                    },
                     "expires_in": {
                         "type": "integer",
                         "example": 3600
