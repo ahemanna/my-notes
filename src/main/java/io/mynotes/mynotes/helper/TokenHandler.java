@@ -37,8 +37,13 @@ public class TokenHandler {
         try {
             Response response = client.newCall(request).execute();
 
-            ObjectMapper mapper = new ObjectMapper();
-            if(response.body() != null) {
+            if (response.code() != 200) {
+                System.out.println("StatusCode :: " + response.code());
+                System.out.println("Response :: " + (response.body() != null ? response.body().string() : null));
+                throw new RuntimeException("Error generating access token");
+            }
+            if (response.body() != null) {
+                ObjectMapper mapper = new ObjectMapper();
                 token = mapper.readValue(response.body().string(), Token.class);
             }
         } catch (IOException e) {

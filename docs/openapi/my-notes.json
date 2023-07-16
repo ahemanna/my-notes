@@ -595,14 +595,14 @@
             "user": {
                 "type": "object",
                 "properties": {
-                    "first_name": {
+                    "given_name": {
                         "type": "string",
                         "description": "First name of the user.",
                         "minLength": 1,
                         "maxLength": 30,
                         "example": "Jane"
                     },
-                    "last_name": {
+                    "family_name": {
                         "type": "string",
                         "description": "Last name of the user.",
                         "minLength": 1,
