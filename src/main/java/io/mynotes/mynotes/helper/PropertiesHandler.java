@@ -23,8 +23,12 @@ public class PropertiesHandler {
         return env.getProperty("auth0.client-secret");
     }
 
-    public String getAudience() {
-        return env.getProperty("auth0.audience");
+    public String getManagementAudience() {
+        return env.getProperty("auth0.management.audience");
+    }
+
+    public String getApiAudience() {
+        return env.getProperty("auth0.api.audience");
     }
 
     public String getApiHost() {

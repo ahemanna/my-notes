@@ -636,6 +636,10 @@
                     "token_type": {
                         "type": "string",
                         "example": "Bearer"
+                    },
+                    "scope": {
+                        "type": "string",
+                        "example": "Bearer"
                     }
                 },
                 "required": [

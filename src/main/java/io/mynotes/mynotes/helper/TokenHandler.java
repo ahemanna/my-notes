@@ -16,12 +16,12 @@ public class TokenHandler {
     PropertiesHandler properties;
 
     @Cacheable(cacheNames = "tokenCache", key = "'token'", unless = "#token != null")
-    public Token getAccessToken() {
+    public Token generateAccessToken() {
         Token token = null;
 
         String clientId = properties.getClientId();
         String clientSecret = properties.getClientSecret();
-        String audience = properties.getAudience();
+        String audience = properties.getManagementAudience();
         String apiHost = properties.getApiHost();
 
         OkHttpClient client = new OkHttpClient().newBuilder()

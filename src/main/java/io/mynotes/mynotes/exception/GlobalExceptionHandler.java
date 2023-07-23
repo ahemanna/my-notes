@@ -21,6 +21,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UnauthorizedError.class)
+    public ResponseEntity<ApiError> unauthorizedError(UnauthorizedError e) {
+        System.out.println("Error :: " + e.getMessage());
+
+        ApiError error = new ApiError(
+                "UNAUTHORIZED",
+                "Invalid credentials.");
+
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ForbiddenError.class)
+    public ResponseEntity<ApiError> forbiddenError(ForbiddenError e) {
+        System.out.println("Error :: " + e.getMessage());
+
+        ApiError error = new ApiError(
+                "FORBIDDEN",
+                e.getMessage()
+        );
+
+        return  new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(ConflictError.class)
     public ResponseEntity<ApiError> conflictError(ConflictError e) {
         System.out.println("Error :: " + e.getMessage());
@@ -33,17 +56,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(UnauthorizedError.class)
-    public ResponseEntity<ApiError> unauthorizedError(UnauthorizedError e) {
-        System.out.println("Error :: " + e.getMessage());
-
-        ApiError error = new ApiError(
-                "UNAUTHORIZED",
-                "Invalid credentials.");
-
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleExceptions(Exception e) {
         System.out.println("Error :: " + e.getMessage());
@@ -54,5 +66,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 }

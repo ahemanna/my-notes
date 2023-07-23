@@ -7,12 +7,8 @@ import lombok.ToString;
 
 @Getter @Setter @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Auth0Error {
-    private int statusCode;
-
+public class Auth0OauthError {
     private String error;
 
-    private String message;
-
-    private String errorCode;
+    private String error_description;
 }
