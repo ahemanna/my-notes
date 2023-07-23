@@ -104,7 +104,7 @@ public class AuthService {
                 if(response.code() == 403) {
                     throw new ForbiddenError(auth0OauthError.getError_description());
                 } else {
-                    throw new RuntimeException("Something went wrong!");
+                    throw new RuntimeException(auth0OauthError.getError_description());
                 }
             } else {
                 return mapper.readValue(response.body().string(), Token.class);
