@@ -1,6 +1,7 @@
 package io.mynotes.mynotes.controller;
 
 import io.mynotes.api.management.api.AuthApi;
+import io.mynotes.api.management.model.GenerateTokenRequest;
 import io.mynotes.api.management.model.Token;
 import io.mynotes.api.management.model.User;
 import io.mynotes.mynotes.service.AuthService;
@@ -28,7 +29,8 @@ public class AuthController implements AuthApi {
     }
 
     @Override
-    public ResponseEntity<Token> generateToken(String username, String password) {
-        return AuthApi.super.generateToken(username, password);
+    public ResponseEntity<Token> generateToken(GenerateTokenRequest generateTokenRequest) {
+        Token t = authService.generateToken(generateTokenRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(t);
     }
 }

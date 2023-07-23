@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.mynotes</groupId>
-	<artifactId>my-notes</artifactId>
+	<artifactId>my-notes-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>my-notes</name>
+	<name>my-notes-api</name>
 	<description>APIs for My Notes</description>
 	<properties>
 		<java.version>17</java.version>

@@ -2,11 +2,14 @@ package io.mynotes.mynotes.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.mynotes.api.management.model.GenerateTokenRequest;
 import io.mynotes.api.management.model.Token;
 import io.mynotes.api.management.model.User;
 import io.mynotes.mynotes.exception.BadRequestError;
+import io.mynotes.mynotes.exception.ConflictError;
+import io.mynotes.mynotes.helper.Helper;
+import io.mynotes.mynotes.helper.PropertiesHandler;
 import io.mynotes.mynotes.helper.TokenHandler;
-import io.mynotes.mynotes.helper.Utils;
 import io.mynotes.mynotes.model.Auth0Error;
 import io.mynotes.mynotes.model.Auth0User;
 import okhttp3.*;
@@ -19,7 +22,7 @@ import java.io.IOException;
 public class AuthService {
 
     @Autowired
-    Utils utils;
+    PropertiesHandler properties;
 
     @Autowired
     TokenHandler tokenHandler;
@@ -31,13 +34,8 @@ public class AuthService {
                 .build();
         MediaType mediaType = MediaType.parse("application/json");
 
-        Auth0User auth0User = new Auth0User();
-        User user1 = new User();
-
-        auth0User.setEmail(user.getEmail());
-        auth0User.setPassword(user.getPassword());
-        auth0User.setGiven_name(user.getGivenName());
-        auth0User.setFamily_name(user.getFamilyName());
+        Auth0User auth0User = Helper.mapUser2Auth0User(user);
+        auth0User.setName(user.getFirstName() + " " + user.getLastName());
         String CONNECTION = "Username-Password-Authentication";
         auth0User.setConnection(CONNECTION);
 
@@ -51,7 +49,7 @@ public class AuthService {
 
         RequestBody body = RequestBody.create(requestBody, mediaType);
         Request request = new Request.Builder()
-                .url(utils.getApiHost() + "/api/v2/users")
+                .url(properties.getApiHost() + "/api/v2/users")
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Authorization", "Bearer " + token.getAccessToken())
@@ -64,19 +62,23 @@ public class AuthService {
                 Auth0Error auth0Error = mapper.readValue(response.body().string(), Auth0Error.class);
                 if(response.code() == 400) {
                     throw new BadRequestError(auth0Error.getMessage());
+                } else if (response.code() == 409) {
+                    throw new ConflictError(auth0Error.getMessage());
                 } else {
                     throw new RuntimeException(auth0Error.getMessage());
                 }
             } else {
-                Auth0User auth0User1 = mapper.readValue(response.body().string(), Auth0User.class);
-                user1.setEmail(auth0User1.getEmail());
-                user1.setFamilyName(auth0User1.getFamily_name());
-                user1.setGivenName(auth0User1.getGiven_name());
+                Auth0User newUser = mapper.readValue(response.body().string(), Auth0User.class);
+                return Helper.mapAuth0User2User(newUser);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
-        return user1;
+    public Token generateToken(GenerateTokenRequest generateTokenRequest) {
+        System.out.println(generateTokenRequest.toString());
+
+        return null;
     }
 }

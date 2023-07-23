@@ -20,6 +20,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ConflictError.class)
+    public ResponseEntity<ApiError> conflictError(ConflictError e) {
+        System.out.println("Error :: " + e.getMessage());
+
+        ApiError error = new ApiError(
+                "CONFLICT",
+                e.getMessage()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(UnauthorizedError.class)
     public ResponseEntity<ApiError> unauthorizedError(UnauthorizedError e) {
         System.out.println("Error :: " + e.getMessage());

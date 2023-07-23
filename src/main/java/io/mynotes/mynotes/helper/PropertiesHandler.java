@@ -7,11 +7,11 @@ import org.springframework.core.env.Environment;
 import java.util.Objects;
 
 @Configuration
-public class Utils {
+public class PropertiesHandler {
     @Autowired
     private Environment env;
 
-    public Utils(Environment env) {
+    public PropertiesHandler(Environment env) {
         this.env = env;
     }
 

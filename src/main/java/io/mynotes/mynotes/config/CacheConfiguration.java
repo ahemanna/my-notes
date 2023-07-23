@@ -1,7 +1,7 @@
 package io.mynotes.mynotes.config;
 
 import io.mynotes.api.management.model.Token;
-import io.mynotes.mynotes.helper.Utils;
+import io.mynotes.mynotes.helper.PropertiesHandler;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
@@ -21,7 +21,7 @@ import java.time.Duration;
 @EnableCaching
 public class CacheConfiguration {
     @Autowired
-    Utils utils;
+    PropertiesHandler properties;
 
     @Bean
     public CacheManager EhCacheManager() {
@@ -29,7 +29,7 @@ public class CacheConfiguration {
                 .newCacheConfigurationBuilder(String.class, Token.class,
                         ResourcePoolsBuilder.newResourcePoolsBuilder().offheap(1, MemoryUnit.MB)
                                 .build())
-                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(utils.getCacheTtl())))
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(properties.getCacheTtl())))
                 .build();
 
         CachingProvider cachingProvider = Caching.getCachingProvider();

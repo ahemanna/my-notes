@@ -1,5 +1,6 @@
 package io.mynotes.mynotes.helper;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mynotes.api.management.model.Token;
 import okhttp3.*;
@@ -12,16 +13,16 @@ import java.io.IOException;
 @Configuration
 public class TokenHandler {
     @Autowired
-    Utils utils;
+    PropertiesHandler properties;
 
     @Cacheable(cacheNames = "tokenCache", key = "'token'", unless = "#token != null")
     public Token getAccessToken() {
         Token token = null;
 
-        String clientId = utils.getClientId();
-        String clientSecret = utils.getClientSecret();
-        String audience = utils.getAudience();
-        String apiHost = utils.getApiHost();
+        String clientId = properties.getClientId();
+        String clientSecret = properties.getClientSecret();
+        String audience = properties.getAudience();
+        String apiHost = properties.getApiHost();
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -44,6 +45,7 @@ public class TokenHandler {
             }
             if (response.body() != null) {
                 ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 token = mapper.readValue(response.body().string(), Token.class);
             }
         } catch (IOException e) {

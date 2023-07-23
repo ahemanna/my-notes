@@ -443,12 +443,13 @@
                 "requestBody": {
                     "description": "Authenticate a user.",
                     "content": {
-                        "application/x-www-form-urlencoded": {
+                        "application/json": {
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "username": {
-                                        "type": "string"
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
                                     },
                                     "password": {
                                         "type": "string"
@@ -595,14 +596,14 @@
             "user": {
                 "type": "object",
                 "properties": {
-                    "given_name": {
+                    "first_name": {
                         "type": "string",
                         "description": "First name of the user.",
                         "minLength": 1,
                         "maxLength": 30,
                         "example": "Jane"
                     },
-                    "family_name": {
+                    "last_name": {
                         "type": "string",
                         "description": "Last name of the user.",
                         "minLength": 1,
@@ -626,9 +627,6 @@
                 "type": "object",
                 "properties": {
                     "access_token": {
-                        "type": "string"
-                    },
-                    "scope": {
                         "type": "string"
                     },
                     "expires_in": {
