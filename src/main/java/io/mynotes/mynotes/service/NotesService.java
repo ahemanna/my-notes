@@ -25,6 +25,14 @@ public class NotesService {
         return toModel(n2);
     }
 
+    public Note retrieveNote(UUID id, String username) {
+        io.mynotes.mynotes.entity.Note note = notesRepository.findByIdAndUserId(id, username);
+        if(null == note) {
+            throw new NotFoundError(String.format("Note of ID %s not found", id));
+        }
+        return toModel(note);
+    }
+
     public void deleteNote(UUID id, String username) {
         long count = notesRepository.deleteByIdAndUserId(id, username);
 

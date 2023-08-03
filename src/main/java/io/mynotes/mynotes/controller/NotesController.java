@@ -43,7 +43,8 @@ public class NotesController implements NotesApi {
 
     @Override
     public ResponseEntity<Note> retrieveNote(UUID id) {
-        return NotesApi.super.retrieveNote(id);
+        Note note = notesService.retrieveNote(id, getUsername());
+        return ResponseEntity.status(HttpStatus.OK).body(note);
     }
 
     @Override

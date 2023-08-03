@@ -11,6 +11,8 @@ import java.util.UUID;
 @Repository
 public interface NotesRepository extends JpaRepository<Note, UUID> {
 
+    Note findByIdAndUserId(@Param("id")UUID id, @Param("user_id")String userId);
+
     @Transactional
     long deleteByIdAndUserId(@Param("id")UUID id, @Param("user_id")String userId);
 }
