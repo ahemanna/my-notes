@@ -3,6 +3,7 @@ package io.mynotes.mynotes.service;
 import io.mynotes.api.management.model.Note;
 import io.mynotes.mynotes.repository.NotesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -14,9 +15,10 @@ public class NotesService {
     NotesRepository notesRepository;
 
     public Note createNote(Note note) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         io.mynotes.mynotes.entity.Note n = toEntity(note);
 
-        n.setUserId("test_user");
+        n.setUserId(username);
         n.setCreatedAt(OffsetDateTime.now());
 
         io.mynotes.mynotes.entity.Note n2 = notesRepository.save(n);
