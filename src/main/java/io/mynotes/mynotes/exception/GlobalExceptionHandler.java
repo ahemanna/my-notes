@@ -44,6 +44,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return  new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(NotFoundError.class)
+    public ResponseEntity<ApiError> notFoundError(NotFoundError e) {
+        System.out.println("Error :: " + e.getMessage());
+
+        ApiError error = new ApiError(
+                "NOT_FOUND",
+                e.getMessage()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(ConflictError.class)
     public ResponseEntity<ApiError> conflictError(ConflictError e) {
         System.out.println("Error :: " + e.getMessage());

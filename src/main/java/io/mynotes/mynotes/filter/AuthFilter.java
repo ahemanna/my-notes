@@ -38,7 +38,6 @@ public class AuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("Enforce auth filter");
 
         String authHeader = request.getHeader("Authorization");
         String token;

@@ -7,6 +7,7 @@ import io.mynotes.mynotes.service.NotesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 
@@ -25,13 +26,13 @@ public class NotesController implements NotesApi {
 
     @Override
     public ResponseEntity<Note> createNote(Note note) {
-        Note n = notesService.createNote(note);
+        Note n = notesService.createNote(note, getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(n);
     }
 
     @Override
     public ResponseEntity<Void> deleteNote(UUID id) {
-//        notesService.deleteNote();
+        notesService.deleteNote(id, getUsername());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
@@ -48,5 +49,9 @@ public class NotesController implements NotesApi {
     @Override
     public ResponseEntity<Note> updateNote(UUID id, Note note) {
         return NotesApi.super.updateNote(id, note);
+    }
+
+    protected String  getUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }
