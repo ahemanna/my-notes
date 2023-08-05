@@ -1,12 +1,18 @@
 package io.mynotes.mynotes.service;
 
 import io.mynotes.api.management.model.Note;
+import io.mynotes.api.management.model.Notes;
 import io.mynotes.mynotes.exception.NotFoundError;
+import io.mynotes.mynotes.helper.Helper;
 import io.mynotes.mynotes.repository.NotesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -15,14 +21,30 @@ public class NotesService {
     @Autowired
     NotesRepository notesRepository;
 
+    public Notes listNotes(String username, Integer offset, Integer limit) {
+        Pageable pageable = PageRequest.of(offset, limit);
+        Page<io.mynotes.mynotes.entity.Note> notes = notesRepository.findAllByUserId(username, pageable);
+
+        Notes notesList = new Notes();
+        notesList.setItems(notes.getContent().stream().map(Helper::toModel).toList());
+        notesList.setOffset(offset);
+        notesList.setLimit(limit);
+        notesList.setTotal(notes.getTotalElements());
+
+        return notesList;
+    }
+
     public Note createNote(Note note, String username) {
-        io.mynotes.mynotes.entity.Note n = toEntity(note);
+        io.mynotes.mynotes.entity.Note n = Helper.toEntity(note);
 
         n.setUserId(username);
-        n.setCreatedAt(OffsetDateTime.now());
+
+        OffsetDateTime now = OffsetDateTime.now();
+        n.setCreatedAt(now);
+        n.setModifiedAt(now);
 
         io.mynotes.mynotes.entity.Note n2 = notesRepository.save(n);
-        return toModel(n2);
+        return Helper.toModel(n2);
     }
 
     public Note retrieveNote(UUID id, String username) {
@@ -30,7 +52,22 @@ public class NotesService {
         if(null == note) {
             throw new NotFoundError(String.format("Note of ID %s not found", id));
         }
-        return toModel(note);
+
+        return Helper.toModel(note);
+    }
+
+    public Note updateNote(UUID id, Note note, String username) {
+        io.mynotes.mynotes.entity.Note n = notesRepository.findByIdAndUserId(id, username);
+        if(null == n) {
+            throw new NotFoundError(String.format("Note of ID %s not found", id));
+        }
+        Optional.ofNullable(note.getTitle()).ifPresent(n::setTitle);
+        Optional.ofNullable(note.getContent()).ifPresent(n::setContent);
+        n.setModifiedAt(OffsetDateTime.now());
+
+        io.mynotes.mynotes.entity.Note updatedNote = notesRepository.save(n);
+
+        return Helper.toModel(updatedNote);
     }
 
     public void deleteNote(UUID id, String username) {
@@ -39,27 +76,5 @@ public class NotesService {
         if( count == 0) {
             throw new NotFoundError(String.format("Note of ID %s not found", id));
         }
-    }
-
-    public io.mynotes.mynotes.entity.Note toEntity(Note note) {
-        io.mynotes.mynotes.entity.Note n = new io.mynotes.mynotes.entity.Note();
-
-        n.setTitle(note.getTitle());
-        n.setContent(note.getContent());
-        n.setModifiedAt(OffsetDateTime.now());
-
-        return n;
-    }
-
-    public Note toModel(io.mynotes.mynotes.entity.Note note) {
-        Note n = new Note();
-
-        n.setId(note.getId());
-        n.setTitle(note.getTitle());
-        n.setContent(note.getContent());
-        n.setCreatedAt(note.getCreatedAt());
-        n.setModifiedAt(note.getModifiedAt());
-
-        return n;
     }
 }

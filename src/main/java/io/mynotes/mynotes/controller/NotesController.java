@@ -25,20 +25,15 @@ public class NotesController implements NotesApi {
     }
 
     @Override
+    public ResponseEntity<Notes> listNotes(Integer offset, Integer limit) {
+        Notes notes = notesService.listNotes(getUsername(), offset, limit);
+        return ResponseEntity.status(HttpStatus.OK).body(notes);
+    }
+
+    @Override
     public ResponseEntity<Note> createNote(Note note) {
         Note n = notesService.createNote(note, getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(n);
-    }
-
-    @Override
-    public ResponseEntity<Void> deleteNote(UUID id) {
-        notesService.deleteNote(id, getUsername());
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-    }
-
-    @Override
-    public ResponseEntity<Notes> listNotes(Integer offset, Integer limit) {
-        return NotesApi.super.listNotes(offset, limit);
     }
 
     @Override
@@ -49,7 +44,14 @@ public class NotesController implements NotesApi {
 
     @Override
     public ResponseEntity<Note> updateNote(UUID id, Note note) {
-        return NotesApi.super.updateNote(id, note);
+        Note updatedNote = notesService.updateNote(id, note, getUsername());
+        return ResponseEntity.status(HttpStatus.OK).body(updatedNote);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteNote(UUID id) {
+        notesService.deleteNote(id, getUsername());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
     protected String  getUsername() {

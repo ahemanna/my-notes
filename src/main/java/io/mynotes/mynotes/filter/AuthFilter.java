@@ -1,5 +1,6 @@
 package io.mynotes.mynotes.filter;
 
+import io.mynotes.mynotes.exception.UnauthorizedError;
 import io.mynotes.mynotes.helper.PropertiesHandler;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -74,7 +75,8 @@ public class AuthFilter extends OncePerRequestFilter {
                 throw new RuntimeException(e);
             }
         } else {
-            throw new RuntimeException("Unauthorized");
+            // https://stackoverflow.com/questions/30335157/make-simple-servlet-filter-work-with-controlleradvice
+            throw new UnauthorizedError("Token is missing or is invalid");
         }
 
         filterChain.doFilter(request, response);

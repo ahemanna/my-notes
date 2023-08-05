@@ -1,5 +1,6 @@
 package io.mynotes.mynotes.helper;
 
+import io.mynotes.api.management.model.Note;
 import io.mynotes.api.management.model.User;
 import io.mynotes.mynotes.model.Auth0User;
 import org.modelmapper.ModelMapper;
@@ -33,5 +34,15 @@ public class Helper {
                 });
 
         return modelMapper.map(user, Auth0User.class);
+    }
+
+    public static Note toModel(io.mynotes.mynotes.entity.Note note) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(note, Note.class);
+    }
+
+    public static io.mynotes.mynotes.entity.Note toEntity(Note note) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(note, io.mynotes.mynotes.entity.Note.class);
     }
 }

@@ -48,6 +48,7 @@
                     {
                         "name": "offset",
                         "in": "query",
+                        "required": false,
                         "schema": {
                             "$ref": "#/components/schemas/offset"
                         }
@@ -55,6 +56,7 @@
                     {
                         "name": "limit",
                         "in": "query",
+                        "required": false,
                         "schema": {
                             "$ref": "#/components/schemas/limit"
                         }
@@ -578,18 +580,21 @@
                 "type": "integer",
                 "description": "Pointer to navigate between pages.",
                 "minimum": 0,
-                "example": 10
+                "example": 10,
+                "default": 0
             },
             "limit": {
                 "type": "integer",
                 "description": "Number of notes to be returned in each page.",
                 "minimum": 1,
                 "maximum": 10,
-                "example": 10
+                "example": 10,
+                "default": 10
             },
             "total": {
                 "type": "integer",
                 "description": "Total number of notes.",
+                "format": "int64",
                 "minimum": 0,
                 "example": 15
             },
