@@ -1,6 +1,9 @@
 package io.mynotes.mynotes.filter;
 
-import io.mynotes.mynotes.exception.UnauthorizedError;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.mynotes.mynotes.exception.ApiError;
 import io.mynotes.mynotes.helper.PropertiesHandler;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -43,7 +46,12 @@ public class AuthFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         String token;
 
-        if(authHeader != null && authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            setErrorResponse("ACCESS_DENIED",
+                    "Access token is missing or is not a `Bearer` token",
+                    HttpServletResponse.SC_UNAUTHORIZED,
+                    response);
+        } else {
             token = authHeader.substring(7);
 
             String JWKS = properties.getApiHost() + "/.well-known/jwks.json";
@@ -61,7 +69,7 @@ public class AuthFilter extends OncePerRequestFilter {
             try {
                 jwtClaims = jwtConsumer.processToClaims(token);
                 Collection<? extends GrantedAuthority> authorities = jwtClaims
-                        .getClaimValue("permissions") == null? AuthorityUtils.NO_AUTHORITIES:
+                        .getClaimValue("permissions") == null ? AuthorityUtils.NO_AUTHORITIES :
                         AuthorityUtils.createAuthorityList(jwtClaims.getClaimValueAsString("permissions"));
 
                 User principal = new User(jwtClaims
@@ -71,15 +79,31 @@ public class AuthFilter extends OncePerRequestFilter {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 context.setAuthentication(authentication);
                 SecurityContextHolder.setContext(context);
-            } catch (InvalidJwtException | MalformedClaimException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            // https://stackoverflow.com/questions/30335157/make-simple-servlet-filter-work-with-controlleradvice
-            throw new UnauthorizedError("Token is missing or is invalid");
-        }
 
-        filterChain.doFilter(request, response);
+                filterChain.doFilter(request, response);
+            } catch (InvalidJwtException | MalformedClaimException e) {
+                System.out.println(e.getMessage());
+                setErrorResponse("INVALID_TOKEN",
+                        "The token has either expired or is malformed.",
+                        HttpServletResponse.SC_FORBIDDEN,
+                        response);
+            }
+        }
+    }
+
+    private void setErrorResponse(String errorCode, String errorDescription, int errorStatus, HttpServletResponse response)
+            throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.registerModule(new JavaTimeModule());
+
+        ApiError error = new ApiError();
+        error.setErrorCode(errorCode);
+        error.setErrorDescription(errorDescription);
+
+        response.setContentType("application/json");
+        response.setStatus(errorStatus);
+        response.getWriter().write(objectMapper.writeValueAsString(error));
     }
 
     @Override
