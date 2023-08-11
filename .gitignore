@@ -1,3 +1,10 @@
+# Mac related files
+.DS_Store
+
+# IDE related files
+.idea/
+target/
+
 # Compiled class file
 *.class
 
