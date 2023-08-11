@@ -15,6 +15,8 @@ import io.mynotes.mynotes.model.Auth0ApiError;
 import io.mynotes.mynotes.model.Auth0OauthError;
 import io.mynotes.mynotes.model.Auth0User;
 import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ import java.io.IOException;
 @Service
 public class AuthService {
 
+    Logger logger = LoggerFactory.getLogger(AuthService.class);
+
     @Autowired
     PropertiesHandler properties;
 
@@ -30,6 +34,8 @@ public class AuthService {
     TokenHandler tokenHandler;
 
     public User createUser(User user) {
+        logger.info("Service :: createUser");
+
         Token token = tokenHandler.generateAccessToken();
 
         Auth0User auth0User = Helper.mapUser2Auth0User(user);
@@ -77,6 +83,7 @@ public class AuthService {
     }
 
     public Token generateToken(GenerateTokenRequest generateTokenRequest) {
+        logger.info("Service :: generateToken");
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");

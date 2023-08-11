@@ -17,6 +17,8 @@ import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.resolvers.HttpsJwksVerificationKeyResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -36,6 +38,8 @@ import java.util.Collection;
 @Configuration
 public class AuthFilter extends OncePerRequestFilter {
 
+    Logger logger = LoggerFactory.getLogger(AuthFilter.class);
+
     @Autowired
     PropertiesHandler properties;
 
@@ -47,6 +51,8 @@ public class AuthFilter extends OncePerRequestFilter {
         String token;
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            logger.info("Access token missing or the token doesn't start with `Bearer `");
+
             setErrorResponse("ACCESS_DENIED",
                     "Access token is missing or is not a `Bearer` token",
                     HttpServletResponse.SC_UNAUTHORIZED,
@@ -82,7 +88,8 @@ public class AuthFilter extends OncePerRequestFilter {
 
                 filterChain.doFilter(request, response);
             } catch (InvalidJwtException | MalformedClaimException e) {
-                System.out.println(e.getMessage());
+                logger.info(e.getMessage());
+
                 setErrorResponse("INVALID_TOKEN",
                         "The token has either expired or is malformed.",
                         HttpServletResponse.SC_FORBIDDEN,

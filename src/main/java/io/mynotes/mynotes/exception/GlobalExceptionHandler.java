@@ -1,5 +1,7 @@
 package io.mynotes.mynotes.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -8,10 +10,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+    Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BadRequestError.class)
     public ResponseEntity<ApiError> badRequestError(BadRequestError e) {
-        System.out.println("Error :: " + e.getMessage());
+        logger.info("Error :: " + e.getMessage());
 
         ApiError error = new ApiError(
                 "BAD_REQUEST",
@@ -23,7 +26,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UnauthorizedError.class)
     public ResponseEntity<ApiError> unauthorizedError(UnauthorizedError e) {
-        System.out.println("Error :: " + e.getMessage());
+        logger.info("Error :: " + e.getMessage());
 
         ApiError error = new ApiError(
                 "UNAUTHORIZED",
@@ -34,7 +37,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ForbiddenError.class)
     public ResponseEntity<ApiError> forbiddenError(ForbiddenError e) {
-        System.out.println("Error :: " + e.getMessage());
+        logger.info("Error :: " + e.getMessage());
 
         ApiError error = new ApiError(
                 "FORBIDDEN",
@@ -46,7 +49,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NotFoundError.class)
     public ResponseEntity<ApiError> notFoundError(NotFoundError e) {
-        System.out.println("Error :: " + e.getMessage());
+        logger.info("Error :: " + e.getMessage());
 
         ApiError error = new ApiError(
                 "NOT_FOUND",
@@ -58,7 +61,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ConflictError.class)
     public ResponseEntity<ApiError> conflictError(ConflictError e) {
-        System.out.println("Error :: " + e.getMessage());
+        logger.info("Error :: " + e.getMessage());
 
         ApiError error = new ApiError(
                 "CONFLICT",
@@ -70,7 +73,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleExceptions(Exception e) {
-        System.out.println("Error :: " + e.getMessage());
+        logger.info("Error :: " + e.getMessage());
 
         ApiError error = new ApiError(
                 "INTERNAL_ERROR",

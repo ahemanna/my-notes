@@ -5,6 +5,8 @@ import io.mynotes.api.management.model.Notes;
 import io.mynotes.mynotes.exception.NotFoundError;
 import io.mynotes.mynotes.helper.Helper;
 import io.mynotes.mynotes.repository.NotesRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,10 +20,14 @@ import java.util.UUID;
 @Service
 public class NotesService {
 
+    Logger logger = LoggerFactory.getLogger(NotesService.class);
+
     @Autowired
     NotesRepository notesRepository;
 
     public Notes listNotes(String username, Integer offset, Integer limit) {
+        logger.info("Service :: listNotes");
+
         Pageable pageable = PageRequest.of(offset, limit);
         Page<io.mynotes.mynotes.entity.Note> notes = notesRepository.findAllByUserId(username, pageable);
 
@@ -35,6 +41,8 @@ public class NotesService {
     }
 
     public Note createNote(Note note, String username) {
+        logger.info("Service :: createNote");
+
         io.mynotes.mynotes.entity.Note n = Helper.toEntity(note);
 
         n.setUserId(username);
@@ -48,8 +56,11 @@ public class NotesService {
     }
 
     public Note retrieveNote(UUID id, String username) {
+        logger.info("Service :: retrieveNote");
+
         io.mynotes.mynotes.entity.Note note = notesRepository.findByIdAndUserId(id, username);
         if(null == note) {
+            logger.info(String.format("Note of ID %s not found", id));
             throw new NotFoundError(String.format("Note of ID %s not found", id));
         }
 
@@ -57,8 +68,11 @@ public class NotesService {
     }
 
     public Note updateNote(UUID id, Note note, String username) {
+        logger.info("Service :: updateNote");
+
         io.mynotes.mynotes.entity.Note n = notesRepository.findByIdAndUserId(id, username);
         if(null == n) {
+            logger.info(String.format("Note of ID %s not found", id));
             throw new NotFoundError(String.format("Note of ID %s not found", id));
         }
         Optional.ofNullable(note.getTitle()).ifPresent(n::setTitle);
@@ -71,9 +85,12 @@ public class NotesService {
     }
 
     public void deleteNote(UUID id, String username) {
+        logger.info("Service :: deleteNote");
+
         long count = notesRepository.deleteByIdAndUserId(id, username);
 
         if( count == 0) {
+            logger.info(String.format("%d records found for the user ID %s", count, id));
             throw new NotFoundError(String.format("Note of ID %s not found", id));
         }
     }
