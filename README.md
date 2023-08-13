@@ -40,7 +40,8 @@ Following are the prerequisites to get the API up and running.
    8. AUTH0_MGMT_AUDIENCE - The audience of Auth0's Management API
    9. AUTH0_API_AUDIENCE - The audience of the `My Notes API` registered on Auth0
    10. AUTH0_API_HOST - The hostname of the Auth0 APIs
-3. Run the maven compile command `./mvnw clean compile`
+3. Run the maven compile command `./mvnw clean compile` to compile the project
+4. Run the maven run command `./mvn spring-boot:run`
 
 This should get the API up and running on `http://locahost:8080/`
 
