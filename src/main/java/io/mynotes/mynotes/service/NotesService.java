@@ -2,6 +2,7 @@ package io.mynotes.mynotes.service;
 
 import io.mynotes.api.management.model.Note;
 import io.mynotes.api.management.model.Notes;
+import io.mynotes.mynotes.exception.BadRequestError;
 import io.mynotes.mynotes.exception.NotFoundError;
 import io.mynotes.mynotes.helper.Helper;
 import io.mynotes.mynotes.repository.NotesRepository;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,6 +46,8 @@ public class NotesService {
     public Note createNote(Note note, String username) {
         logger.info("Service :: createNote");
 
+        validateNote(note);
+
         io.mynotes.mynotes.entity.Note n = Helper.toEntity(note);
 
         n.setUserId(username);
@@ -70,11 +75,18 @@ public class NotesService {
     public Note updateNote(UUID id, Note note, String username) {
         logger.info("Service :: updateNote");
 
+        if((null == note.getTitle() || "".equals(note.getTitle()))
+        && (null == note.getContent() || "".equals(note.getContent()))) {
+            throw new BadRequestError("Nothing to update");
+        }
+
         io.mynotes.mynotes.entity.Note n = notesRepository.findByIdAndUserId(id, username);
+
         if(null == n) {
             logger.info(String.format("Note of ID %s not found", id));
             throw new NotFoundError(String.format("Note of ID %s not found", id));
         }
+
         Optional.ofNullable(note.getTitle()).ifPresent(n::setTitle);
         Optional.ofNullable(note.getContent()).ifPresent(n::setContent);
         n.setModifiedAt(OffsetDateTime.now());
@@ -92,6 +104,23 @@ public class NotesService {
         if( count == 0) {
             logger.info(String.format("%d records found for the user ID %s", count, id));
             throw new NotFoundError(String.format("Note of ID %s not found", id));
+        }
+    }
+
+    private void validateNote(Note note) {
+        List<String> invalidFields = new ArrayList<>();
+
+        if(null == note.getTitle() || "".equals(note.getTitle())) {
+            invalidFields.add("title");
+        }
+
+        if(null == note.getContent() || "".equals(note.getContent())) {
+            invalidFields.add("content");
+        }
+
+        if(!invalidFields.isEmpty()) {
+            throw new BadRequestError("Following fields are missing or is invalid - " +
+                    String.join(", ", invalidFields));
         }
     }
 }
