@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AuthService {
@@ -35,6 +37,8 @@ public class AuthService {
 
     public User createUser(User user) {
         logger.info("Service :: createUser");
+
+        validateUser(user);
 
         Token token = tokenHandler.generateAccessToken();
 
@@ -85,6 +89,8 @@ public class AuthService {
     public Token generateToken(GenerateTokenRequest generateTokenRequest) {
         logger.info("Service :: generateToken");
 
+        validateTokenRequest(generateTokenRequest);
+
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         RequestBody body = RequestBody.create(
@@ -118,6 +124,51 @@ public class AuthService {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void validateUser(User user) {
+        String firstNameRegex = "[A-Za-z]{1,30}";
+        String lastNameRegex = "[A-Za-z]{1,30}";
+
+        List<String> invalidFields = new ArrayList<>();
+
+        if(null == user.getFirstName() || !user.getFirstName().matches(firstNameRegex)) {
+            invalidFields.add("first_name");
+        }
+
+        if(null == user.getLastName() || !user.getLastName().matches(lastNameRegex)) {
+            invalidFields.add("last_name");
+        }
+
+        if(null == user.getEmail() || "".equals(user.getEmail())) {
+            invalidFields.add("email");
+        }
+
+        if(null == user.getPassword() || "".equals(user.getPassword())) {
+            invalidFields.add("password");
+        }
+
+        if(!invalidFields.isEmpty()) {
+           throw new BadRequestError("Following fields are missing or is invalid - " +
+                   String.join(", ", invalidFields));
+        }
+    }
+
+    private void validateTokenRequest(GenerateTokenRequest request) {
+        List<String> invalidFields = new ArrayList<>();
+
+        if(null == request.getEmail() || "".equals(request.getEmail())) {
+            invalidFields.add("email");
+        }
+
+        if(null == request.getPassword() || "".equals(request.getPassword())) {
+            invalidFields.add("password");
+        }
+
+        if(!invalidFields.isEmpty()) {
+            throw new BadRequestError("Following fields are missing or is invalid - " +
+                    String.join(", ", invalidFields));
         }
     }
 }
